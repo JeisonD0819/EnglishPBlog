@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ScrollExpansionImage from "./components/ScrollExpansionImage";
+import VideoPlayer from "./components/VideoPlayer";
 
 // Base URL configurada en vite.config.js
 const BASE_URL = import.meta.env.BASE_URL;
@@ -16,6 +17,7 @@ const sections = [
     subtitle: "Choosing the MMR Project",
     content: `When I was thinking about what I hoped to do for my final degree project, I wanted to take advantage of university funding, which means that the university gives you money so that you can buy the necessary materials for your project. So, I chose the MMR (Mobile Manipulator Robot) project, but when I got in touch with the professor, there were a few things that I had to keep in mind, such as having to fix some parts of the mobile platform.`,
     images: [],
+    videos: [],
   },
   {
     id: "initial-state",
@@ -51,6 +53,7 @@ const sections = [
     subtitle: "Center of Mass Corrected",
     content: `At this moment, I would say that the mobile platform is ready because it can stay still. Before, its center of mass was not in the center, so the platform tended to tilt slightly. So, the next step was thinking about the upper part, which means the robot had to house the different parts like sensors, the embedded system, batteries, and the manipulator system.`,
     images: [],
+    videos: [],
   },
   {
     id: "upper-shell",
@@ -141,6 +144,18 @@ const sections = [
         caption: "Final result showing complete integration of mobile platform and manipulator"
       },
     ],
+    videos: [
+      {
+        src: `${BASE_URL}images/RobotVideo.mp4`,
+        poster: `${BASE_URL}images/IM8.JPG`,
+        title: "Robot in Action",
+        caption: "Watch the complete mobile manipulator robot in motion",
+        autoplay: true,
+        loop: true,
+        muted: true,
+        controls: true,
+      },
+    ],
   },
 ];
 
@@ -229,6 +244,36 @@ function Section({
                     alt={img.alt}
                     title={img.title}
                     caption={img.caption}
+                    className="shadow-2xl"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* Videos */}
+          {section.videos && section.videos.length > 0 && (
+            <div className="mt-10 space-y-10">
+              {section.videos.map((video, videoIndex) => (
+                <motion.div
+                  key={video.src}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.2 + videoIndex * 0.1,
+                    ease: [0.25, 0.46, 0.45, 0.94]
+                  }}
+                >
+                  <VideoPlayer
+                    src={video.src}
+                    poster={video.poster}
+                    title={video.title}
+                    caption={video.caption}
+                    autoplay={video.autoplay}
+                    loop={video.loop}
+                    muted={video.muted}
+                    controls={video.controls !== false}
                     className="shadow-2xl"
                   />
                 </motion.div>
