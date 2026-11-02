@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink-50 text-ink-900 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-accent-500 text-white;
+  }
+}
+
+@layer components {
+  .prose-custom {
+    @apply text-ink-700 leading-relaxed;
+  }
+
+  .prose-custom p {
+    @apply mb-6 text-lg;
+  }
+
+  .prose-custom h2 {
+    @apply font-display text-3xl md:text-4xl font-semibold text-ink-900 mb-6 mt-12 pb-2 border-b border-ink-200;
+  }
+
+  .prose-custom h3 {
+    @apply font-display text-2xl font-medium text-ink-800 mb-4 mt-8;
+  }
+
+  .prose-custom strong {
+    @apply font-medium text-ink-900;
+  }
+
+  .prose-custom em {
+    @apply italic text-ink-600;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Scroll expansion styles */
+.scroll-expansion-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-expansion-image {
+  transition: transform 0.1s linear, opacity 0.1s linear;
+  will-change: transform, opacity;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  @apply outline-none ring-2 ring-accent-500 ring-offset-2 ring-offset-ink-50;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
