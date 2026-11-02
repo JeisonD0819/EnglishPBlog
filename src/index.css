@@ -3,80 +3,365 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Color tokens as CSS custom properties for JS access */
+    --color-machine-black: #0D0D0D;
+    --color-machine-white: #FAFAF9;
+    --color-brass: #C9A84C;
+    --color-brass-hover: #A1873A;
+    --color-steel: #64748B;
+    --color-aluminum: #9CA3AF;
+    --color-safety-orange: #E85D04;
+    --color-coolant: #00B4D8;
+    --color-oxidized: #8B5E3C;
+
+    --bg-primary: #FAFAF9;
+    --bg-surface: #F5F5F4;
+    --bg-elevated: #FFFFFF;
+
+    --text-primary: #0D0D0D;
+    --text-secondary: #64748B;
+    --text-muted: #9CA3AF;
+
+    --accent-primary: #C9A84C;
+    --accent-critical: #E85D04;
+    --accent-info: #00B4D8;
+
+    --border-subtle: #E7E5E4;
+    --border-strong: #D6D3D1;
+    --border-focus: #C9A84C;
+
+    /* Fluid type scale */
+    --step--1: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --step-1: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+    --step-3: clamp(2rem, 1.6rem + 2vw, 3rem);
+    --step-4: clamp(3rem, 2.2rem + 4vw, 5rem);
+
+    /* Timeline rail width */
+    --timeline-width: 280px;
+    --timeline-gap: 2rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-ink-50 text-ink-900 antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply bg-bg-primary text-text-primary font-body text-step-0 antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgb(201 168 76 / 0.03), transparent),
+      linear-gradient(180deg, rgb(245 245 244 / 1) 0%, rgb(250 250 249 / 1) 100%);
+    background-attachment: fixed;
   }
 
   ::selection {
-    @apply bg-accent-500 text-white;
+    @apply bg-brass-200 text-machine-black;
+  }
+
+  /* Focus visible — brass ring, no outline */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brass-500 ring-offset-2 ring-offset-bg-primary;
+  }
+
+  /* Scrollbar — subtle, technical */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-aluminum-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-aluminum-400;
+  }
+  ::-webkit-scrollbar-corner {
+    @apply bg-transparent;
   }
 }
 
 @layer components {
-  .prose-custom {
-    @apply text-ink-700 leading-relaxed;
+  /* Timeline Rail — persistent left navigation */
+  .timeline-rail {
+    @apply fixed left-0 top-0 bottom-0 w-[var(--timeline-width)] bg-bg-surface border-r border-border-subtle
+           flex flex-col items-center pt-16 pb-10 overflow-y-auto
+           z-40 hidden lg:block;
   }
 
-  .prose-custom p {
-    @apply mb-6 text-lg;
+  .timeline-stage {
+    @apply relative w-full px-4 py-3 cursor-pointer transition-colors duration-fast
+           hover:bg-bg-primary hover:border-l-2 hover:border-brass-500
+           data-[active=true]:bg-bg-primary data-[active=true]:border-l-2 data-[active=true]:border-brass-500
+           data-[complete=true]:border-l-2 data-[complete=true]:border-brass-500;
   }
 
-  .prose-custom h2 {
-    @apply font-display text-3xl md:text-4xl font-semibold text-ink-900 mb-6 mt-12 pb-2 border-b border-ink-200;
+  .timeline-stage-number {
+    @apply font-mono text-step--1 text-text-muted tabular-nums
+           data-[active=true]:text-accent-primary data-[active=true]:font-medium
+           data-[complete=true]:text-accent-primary data-[complete=true]:font-medium;
   }
 
-  .prose-custom h3 {
-    @apply font-display text-2xl font-medium text-ink-800 mb-4 mt-8;
+  .timeline-stage-title {
+    @apply font-body text-step--1 text-text-secondary mt-0.5 leading-snug
+           data-[active=true]:text-text-primary data-[active=true]:font-medium
+           data-[complete=true]:text-text-primary data-[complete=true]:font-medium;
   }
 
-  .prose-custom strong {
-    @apply font-medium text-ink-900;
+  .timeline-progress {
+    @apply absolute left-0 bottom-0 h-0.5 bg-brass-500 origin-left
+           transform transition-transform duration-slow ease-technical;
   }
 
-  .prose-custom em {
-    @apply italic text-ink-600;
+  /* Datum Reference Badge */
+  .datum-ref {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded font-mono text-step--1 font-medium
+           bg-brass-500 text-machine-black
+           shadow-technical;
+  }
+
+  /* Section Container — technical page layout */
+  .section-page {
+    @apply relative min-h-screen lg:min-h-[calc(100vh-4rem)] pt-16 pb-20 lg:pt-24 lg:pb-28
+           pl-[calc(var(--timeline-width)+var(--timeline-gap))] lg:pl-[calc(var(--timeline-width)+var(--timeline-gap))]
+           pr-6 lg:pr-12 max-w-7xl mx-auto;
+  }
+
+  .section-header {
+    @apply mb-12 lg:mb-16;
+  }
+
+  .section-datum {
+    @apply flex items-center gap-3 mb-4;
+  }
+
+  .section-title {
+    @apply font-display text-step-4 text-text-primary font-medium tracking-tight leading-[1.1];
+  }
+
+  .section-subtitle {
+    @apply font-body text-step-1 text-text-secondary mt-3 max-w-2xl font-light;
+  }
+
+  /* Content Block — technical documentation style */
+  .content-block {
+    @apply space-y-8 max-w-3xl;
+  }
+
+  .content-paragraph {
+    @apply font-body text-step-0 text-text-primary leading-relaxed;
+  }
+
+  .content-lead {
+    @apply font-body text-step-1 text-text-secondary leading-relaxed font-light;
+  }
+
+  /* Measurement Callout — monospace data display */
+  .measurement {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded bg-bg-surface border border-border-subtle
+           font-mono text-step--1 text-accent-info;
+  }
+
+  .measurement-label {
+    @apply text-text-muted;
+  }
+
+  .measurement-value {
+    @apply font-medium tabular-nums;
+  }
+
+  .measurement-unit {
+    @apply text-text-muted;
+  }
+
+  /* Technical Image Container */
+  .tech-image {
+    @apply relative overflow-hidden bg-bg-surface border border-border-subtle;
+  }
+
+  .tech-image-wrapper {
+    @apply relative overflow-hidden;
+  }
+
+  .tech-image-img {
+    @apply w-full h-auto object-contain transition-transform duration-slow ease-technical
+           hover:scale-[1.02] max-h-[70vh];
+  }
+
+  .tech-image-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-machine-black/70 via-transparent to-transparent
+           flex flex-col justify-end p-6 opacity-0 transition-opacity duration-normal
+           group-hover:opacity-100;
+  }
+
+  .tech-image-title {
+    @apply font-display text-step-2 text-machine-white font-medium;
+  }
+
+  .tech-image-caption {
+    @apply font-body text-step-0 text-brass-100 mt-1 max-w-xs;
+  }
+
+  /* Exploded View Modal */
+  .modal-overlay {
+    @apply fixed inset-0 bg-machine-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4
+           animate-fade-in;
+  }
+
+  .modal-content {
+    @apply bg-bg-elevated rounded-none max-w-5xl w-full max-h-[90vh] overflow-hidden
+           animate-modal-enter shadow-modal;
+  }
+
+  .modal-header {
+    @apply flex items-center justify-between p-6 border-b border-border-subtle;
+  }
+
+  .modal-title {
+    @apply font-display text-step-3 text-text-primary font-medium;
+  }
+
+  .modal-close {
+    @apply p-2 rounded hover:bg-bg-surface transition-colors duration-fast
+           text-text-muted hover:text-text-primary;
+  }
+
+  /* Progress Bar — timeline stage */
+  .progress-bar {
+    @apply h-1.5 bg-border-subtle rounded-none overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-brass-500 origin-left transform animate-progress-fill;
+  }
+
+  /* Button Variants */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-none
+           bg-accent-primary text-machine-black font-body text-step-0 font-medium
+           hover:bg-brass-600 active:bg-brass-700 transition-colors duration-fast
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-500 focus-visible:ring-offset-2;
+  }
+
+  .btn-critical {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-none
+           bg-safety-orange text-machine-white font-body text-step-0 font-medium
+           hover:bg-safety-orangeHover active:bg-safety-orangeHover transition-colors duration-fast
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-safety-orange focus-visible:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-none
+           bg-transparent text-text-secondary font-body text-step-0 font-medium
+           hover:bg-bg-surface hover:text-text-primary transition-colors duration-fast
+           border border-border-subtle hover:border-border-strong;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center p-2 rounded-none
+           bg-transparent text-text-muted hover:text-text-primary hover:bg-bg-surface
+           transition-colors duration-fast;
+  }
+
+  /* Navigation Link — timeline style */
+  .nav-link {
+    @apply font-body text-step--1 text-text-secondary hover:text-text-primary
+           transition-colors duration-fast relative after:absolute after:bottom-0 after:left-0
+           after:w-0 after:h-0.5 after:bg-brass-500 hover:after:w-full after:transition-all after:duration-normal;
+  }
+
+  .nav-link-active {
+    @apply text-accent-primary font-medium after:w-full;
+  }
+
+  /* Divider — technical drawing style */
+  .divider-technical {
+    @apply h-px bg-gradient-to-r from-transparent via-border-strong to-transparent my-12;
+  }
+
+  /* Tag / Status Badge */
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-none font-mono text-step--1;
+  }
+
+  .status-complete {
+    @apply bg-brass-50 text-brass-700 border border-brass-200;
+  }
+
+  .status-current {
+    @apply bg-coolant-50 text-coolant-700 border border-coolant-200 animate-pulse;
+  }
+
+  .status-pending {
+    @apply bg-bg-surface text-text-muted border border-border-subtle;
   }
 }
 
 @layer utilities {
+  /* Text balance for headlines */
   .text-balance {
     text-wrap: balance;
   }
 
+  /* Monospace tabular numbers */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Technical gradient text */
+  .text-gradient-brass {
+    @apply bg-gradient-to-r from-brass-500 to-brass-600 bg-clip-text text-transparent;
+  }
+
+  /* Hide scrollbar but keep scrollable */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-}
 
-/* Scroll expansion styles */
-.scroll-expansion-container {
-  position: relative;
-  overflow: hidden;
-}
+  /* Aspect ratios for technical content */
+  .aspect-tech {
+    aspect-ratio: 4 / 3;
+  }
+  .aspect-cad {
+    aspect-ratio: 16 / 10;
+  }
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
 
-.scroll-expansion-image {
-  transition: transform 0.1s linear, opacity 0.1s linear;
-  will-change: transform, opacity;
-}
-
-/* Focus styles for accessibility */
-*:focus-visible {
-  @apply outline-none ring-2 ring-accent-500 ring-offset-2 ring-offset-ink-50;
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
+  /* Print styles */
+  @media print {
+    .timeline-rail,
+    .modal-overlay,
+    .btn-primary,
+    .btn-critical,
+    .btn-ghost {
+      display: none !important;
+    }
+    .section-page {
+      @apply pl-6 pr-6 pt-8 pb-8;
+    }
+    body {
+      @apply bg-white text-black;
+      background-image: none;
+    }
   }
 }
