@@ -129,7 +129,9 @@ const sections = [
     id: "final-assembly",
     title: "Final Assembly",
     subtitle: "Complete Mobile Manipulator Robot",
-    content: `Finally, I took whole of parts and I started to built all of my robot, including cables and devices for protection like switches or something like that, I had to put the threaded inserts because I needed my manipulator was pinned to my platform. As a result I achieved this:`,
+    content: `Finally, I took whole of parts and I started to built all of my robot, including cables and devices for protection like switches or something like that, I had to put the threaded inserts because I needed my manipulator was pinned to my platform. As a result I achieved this:
+
+After that, I struggled with different problems related to hardware and software. Eventually, I managed to move my robot. However, although I got my platform and manipulator to move, I still needed to program the different trajectories so that my robot could generate value for a specific application.`,
     images: [
       {
         src: `${BASE_URL}images/IM8.JPG`,
