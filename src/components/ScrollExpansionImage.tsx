@@ -9,6 +9,7 @@ interface ScrollExpansionImageProps {
   title?: string;
   caption?: string;
   className?: string;
+  preserveAspectRatio?: boolean;
 }
 
 export default function ScrollExpansionImage({
@@ -17,6 +18,7 @@ export default function ScrollExpansionImage({
   title,
   caption,
   className = "",
+  preserveAspectRatio = false,
 }: ScrollExpansionImageProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -56,13 +58,13 @@ export default function ScrollExpansionImage({
     <div
       ref={containerRef}
       className={`scroll-expansion-container relative overflow-hidden rounded-xl ${className}`}
-      style={{ aspectRatio: "4/3" }}
+      style={preserveAspectRatio ? {} : { aspectRatio: "4/3" }}
     >
       <motion.img
         ref={imageRef}
         src={src}
         alt={alt}
-        className="scroll-expansion-image w-full h-full object-cover"
+        className={`scroll-expansion-image w-full h-full ${preserveAspectRatio ? "object-contain" : "object-cover"}`}
         style={{
           transform: `scale(${scale})`,
           opacity,

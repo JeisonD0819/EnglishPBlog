@@ -129,9 +129,7 @@ const sections = [
     id: "final-assembly",
     title: "Final Assembly",
     subtitle: "Complete Mobile Manipulator Robot",
-    content: `Finally, I took whole of parts and I started to built all of my robot, including cables and devices for protection like switches or something like that, I had to put the threaded inserts because I needed my manipulator was pinned to my platform. As a result I achieved this:
-
-After that, I struggled with different problems related to hardware and software. Eventually, I managed to move my robot. However, although I got my platform and manipulator to move, I still needed to program the different trajectories so that my robot could generate value for a specific application.`,
+    content: `Finally, I took whole of parts and I started to built all of my robot, including cables and devices for protection like switches or something like that, I had to put the threaded inserts because I needed my manipulator was pinned to my platform. As a result I achieved this:`,
     images: [
       {
         src: `${BASE_URL}images/IM8.JPG`,
@@ -146,6 +144,8 @@ After that, I struggled with different problems related to hardware and software
         caption: "Final result showing complete integration of mobile platform and manipulator"
       },
     ],
+    // Text to show after images, before video
+    afterImages: `After that, I struggled with different problems related to hardware and software. Eventually, I managed to move my robot. However, although I got my platform and manipulator to move, I still needed to program the different trajectories so that my robot could generate value for a specific application.`,
     videos: [
       {
         src: `${BASE_URL}images/RobotVideo.mp4`,
@@ -247,10 +247,23 @@ function Section({
                     title={img.title}
                     caption={img.caption}
                     className="shadow-2xl"
+                    preserveAspectRatio
                   />
                 </motion.div>
               ))}
             </div>
+          )}
+
+          {/* Text after images */}
+          {section.afterImages && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="mt-10 pt-8 border-t border-ink-200 text-lg md:text-xl leading-relaxed text-ink-700 max-w-3xl"
+            >
+              <p>{section.afterImages}</p>
+            </motion.div>
           )}
 
           {/* Videos */}
